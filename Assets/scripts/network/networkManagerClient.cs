@@ -94,7 +94,7 @@ public class networkManagerClient : MonoBehaviour {
 	
 	// tells the player that this viewID is theirs
 	[RPC]
-	void ThisOnesYours(NetworkViewID cartViewID, NetworkViewID ballViewID, NetworkViewID characterViewID) {
+	void ThisOnesYours(NetworkViewID cartViewID, NetworkViewID ballViewID, NetworkViewID characterViewID, NetworkViewID headViewID) {
 		networkVariables nvs = GetComponent("networkVariables") as networkVariables;
 		foreach(PlayerInfo p in nvs.players) {
 			if (p.cartViewIDTransform==cartViewID) {
@@ -109,7 +109,7 @@ public class networkManagerClient : MonoBehaviour {
 	
 	// tells the player that this set of viewIDs are a player
 	[RPC]
-	void SpawnPlayer(NetworkViewID cartViewIDTransform, NetworkViewID cartViewIDRigidbody, NetworkViewID ballViewID, NetworkViewID characterViewID, int mode, NetworkPlayer p) {
+	void SpawnPlayer(NetworkViewID cartViewIDTransform, NetworkViewID cartViewIDRigidbody, NetworkViewID ballViewID, NetworkViewID characterViewID, NetworkViewID headViewID, int mode, NetworkPlayer p) {
 		PlayerInfo newGuy = new PlayerInfo();
 
 		newGuy.cartViewIDTransform = cartViewIDTransform;
@@ -122,6 +122,8 @@ public class networkManagerClient : MonoBehaviour {
 		cgr.stateSynchronization = NetworkStateSynchronization.Unreliable;
 		newGuy.characterViewID = characterViewID;
 		newGuy.characterGameObject = NetworkView.Find(characterViewID).gameObject;
+		newGuy.headViewID = headViewID;
+		newGuy.headGameObject = NetworkView.Find(headViewID).gameObject;
 		newGuy.ballViewID = ballViewID;
 		newGuy.ballGameObject = NetworkView.Find(ballViewID).gameObject;
 		newGuy.currentMode = mode;

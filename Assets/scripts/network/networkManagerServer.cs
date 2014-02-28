@@ -28,8 +28,11 @@ public class networkManagerServer : MonoBehaviour {
 		// ****************************
 		GameObject ballGameObject = Instantiate(Resources.Load("ball"), new Vector3(3,5,0), Quaternion.identity) as GameObject;
 		GameObject characterGameObject = Instantiate(Resources.Load("lil_patrick"), new Vector3(0,4,0), Quaternion.identity) as GameObject;
+		GameObject headGameObject = Instantiate(Resources.load("BradHead"), new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+
 		// set buggy as characters parent
 		characterGameObject.transform.parent = cartGameObject.transform;
+		headGameObject.transform.parent = characterGameObject.transform; // TODO reparent later to head bone!
 
 		// networkview that shit
 		NetworkViewID cartViewIDTransform = Network.AllocateViewID();
@@ -58,6 +61,9 @@ public class networkManagerServer : MonoBehaviour {
 		nvs.myInfo.characterGameObject = characterGameObject;
 		nvs.myInfo.characterModel = "lil_patrick";
 		nvs.myInfo.characterViewID = characterViewID;
+		nvs.myInfo.headGameObject = headGameObject;
+		nvs.myInfo.headModel = "BradHead"; // TODO remove hardcoded value!
+		nvs.myInfo.headViewID = headViewID;
 		nvs.myInfo.currentMode = 0;	// set in buggy
 
 		// get self
@@ -96,6 +102,7 @@ public class networkManagerServer : MonoBehaviour {
 			networkView.RPC("SpawnPrefab", player, p.cartViewIDTransform, p.cartGameObject.transform.position, new Vector3(0,0,0), p.cartModel);
 			networkView.RPC("SpawnPrefab", player, p.ballViewID, p.ballGameObject.transform.position, new Vector3(0,0,0), p.ballModel);
 			networkView.RPC("SpawnPrefab", player, p.characterViewID, p.characterGameObject.transform.position, new Vector3(0,0,0), p.characterModel);
+			networkView.RPC("SpawnPrefab", player, p.headViewID, p.headGameObject.transform.position, new Vector3(0,0,0), p.headModel);
 			// tell the player this is a player and not some random objects
 			networkView.RPC("SpawnPlayer", player, p.cartViewIDTransform, p.cartViewIDRigidbody, p.ballViewID, p.characterViewID, p.currentMode, p.player);
 		}
@@ -118,8 +125,10 @@ public class networkManagerServer : MonoBehaviour {
 				Destroy(p.cartGameObject);
 				Destroy(p.ballGameObject);
 				Destroy(p.characterGameObject);
+				Destroy(p.headGameObject);
 				// tell everyone else to aswell
 				networkView.RPC("RemoveViewID", RPCMode.All, p.characterViewID);
+				networkView.RPC("RemoveViewID", RPCMode.All, p.headViewID);
 				networkView.RPC("RemoveViewID", RPCMode.All, p.cartViewIDTransform);
 				networkView.RPC("RemoveViewID", RPCMode.All, p.ballViewID);
 				// remove from array
@@ -162,7 +171,7 @@ public class networkManagerServer : MonoBehaviour {
 	}
 
 	[RPC]
-	void GiveMeACart(string cartModel, string ballModel, string characterModel, NetworkMessageInfo info) {
+	void GiveMeACart(string cartModel, string ballModel, string characterModel, string headModel, NetworkMessageInfo info) {
 		// create new buggy for the new guy - his must be done on the server otherwise collisions wont work!
 		Vector3 spawnLocation = new Vector3(0,5,0);
 		Vector3 velocity = new Vector3(0,0,0);
@@ -171,8 +180,10 @@ public class networkManagerServer : MonoBehaviour {
 		GameObject cartGameObject = Instantiate(Resources.Load(cartModel), spawnLocation, Quaternion.identity) as GameObject;
 		GameObject ballGameObject = Instantiate(Resources.Load(ballModel), spawnLocation + new Vector3(3,0,0), Quaternion.identity) as GameObject;
 		GameObject characterGameObject = Instantiate(Resources.Load(characterModel), spawnLocation + new Vector3(0,-1,0), Quaternion.identity) as GameObject;
+		GameObject headGameObject = Instantiate(Resources.Load(headModel), spawnLocation + new Vector3(0,-1,0), Quaternion.identity) as GameObject;
 		// set buggy as characters parent
 		characterGameObject.transform.parent = cartGameObject.transform;
+		headGameObject.transform.parent = characterGameObject.transform; // TODO parent to head bone!
 
 		// create and set viewIDs
 		NetworkViewID cartViewIDTransform = Network.AllocateViewID();					// track the transform of the cart
@@ -189,17 +200,20 @@ public class networkManagerServer : MonoBehaviour {
 		ballGameObject.networkView.viewID = ballViewID;
 		NetworkViewID characterViewID = Network.AllocateViewID();
 		characterGameObject.networkView.viewID = characterViewID;
+		NetworkViewID headViewID = Network.AllocateViewID();
+		headGameObject.networkView.viewID = headViewID;
 
 		// tell everyone else about it
 		networkView.RPC("SpawnPrefab", RPCMode.Others, cartViewIDTransform, spawnLocation, velocity, cartModel);
 		networkView.RPC("SpawnPrefab", RPCMode.Others, ballViewID, spawnLocation, velocity, ballModel);
 		networkView.RPC("SpawnPrefab", RPCMode.Others, characterViewID, spawnLocation, velocity, characterModel);
+		networkView.RPC("SpawnPrefab", RPCMode.Others, headViewID, spawnLocation, velocity, headModel);
 
 		// tell all players this is a player and not some random objects
-		networkView.RPC("SpawnPlayer", RPCMode.Others, cartViewIDTransform, cartViewIDRigidbody, ballViewID, characterViewID, 0, info.sender);
+		networkView.RPC("SpawnPlayer", RPCMode.Others, cartViewIDTransform, cartViewIDRigidbody, ballViewID, characterViewID, headViewID, 0, info.sender);
 
 		// tell the player it's theirs
-		networkView.RPC("ThisOnesYours", info.sender, cartViewIDTransform, ballViewID, characterViewID);
+		networkView.RPC("ThisOnesYours", info.sender, cartViewIDTransform, ballViewID, characterViewID, headViewID);
 
 		// create a PlayerInfo for it
 		PlayerInfo newGuy = new PlayerInfo();
@@ -213,6 +227,9 @@ public class networkManagerServer : MonoBehaviour {
 		newGuy.characterModel = characterModel;
 		newGuy.characterGameObject = characterGameObject;
 		newGuy.characterViewID = characterViewID;
+		newGuy.headModel = headModel;
+		newGuy.headGameObject = headGameObject;
+		newGuy.headViewID = headViewID;
 		newGuy.currentMode = 0;	// set them in buggy
 		newGuy.player = info.sender;
 

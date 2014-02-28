@@ -30,6 +30,9 @@ public class PlayerInfo {
 	public NetworkViewID characterViewID;		// NetworkViewID of the character
 	public GameObject characterGameObject;		// GameObject of the character
 	public string characterModel;				// model of the character
+	public NetworkViewID headViewID;
+	public GameObject headGameObject;
+	public string headModel;				// head model, to be attached to the head bone
 	public int currentMode;						// current mode of the player (0=in buggy, 1=on foot)
 	public string name;							// name
 	public bool playerIsBusy   = false;			// player is engaged in an uninteruptable action
