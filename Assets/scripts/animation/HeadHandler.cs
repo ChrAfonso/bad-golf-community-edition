@@ -3,6 +3,11 @@ using System.Collections;
 
 public class HeadHandler : MonoBehaviour {
 
+	public static string[] GetHeadsFromResources()
+	{
+		//Resources;
+	}
+
 	/**
 	 * Adds an instance of the named headObject to the body and integrates the rig.
 	 * Returns the created head object

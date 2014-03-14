@@ -23,4 +23,18 @@
 		<Color colorName="brown" one="250,239,212" two="193,165,135" three="81,36,0" four="136,92,62"/>
 		<Color colorName="bnw" one="255,255,255" two="170,170,170" three="0,0,0" four="78,78,78"/>
 	</PlayerColors>
+	<Characters>
+		<CharacterModel model="lil_patrick" name="Patrick" includesHead="true"/>
+		<CharacterModel model="BradOverPatrick" name="Brad" includesHead="true"/>
+		<CharacterModel model="RigtestBody" name="Rigtest_Body" includesHead="false"/>
+		<!-- create and put these in resources!
+		<CharacterModel model="MaleBody" name="MaleBody" includesHead="false"/>
+		<CharacterModel model="FemaleBody" name="FemaleBody" includesHead="false"/>
+		-->
+	</Characters>
+	<Heads>
+		<HeadModel model="PatrickHead" name="Patrick" hasRig="false"/>
+		<HeadModel model="BradHead" name="Brad" hasRig="false"/>
+		<HeadModel model="RigtestHead" name="Rigtest_Head" hasRig="true" rootBone="Neck"/>
+	</Heads>
 </Config>

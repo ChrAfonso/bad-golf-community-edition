@@ -3,7 +3,7 @@ using System.Collections;
 
 public class netLobby : MonoBehaviour {
 	networkVariables nvs;
-	int IcartModel=0, IballModel=0, IcharacterModel=0;
+	int IcartModel=0, IballModel=0, IcharacterModel=0, IheadModel=0;
 	float timer = 0;
 	bool changeNeeded = false;
 	string currentList = "";
@@ -18,7 +18,7 @@ public class netLobby : MonoBehaviour {
 		nvs.myInfo.cartModel = nvs.buggyModels[0];
 		nvs.myInfo.ballModel = nvs.ballModels[0];
 		nvs.myInfo.characterModel = nvs.characterModels[0];
-		
+
 		// add chat
 		gameObject.AddComponent("netChat");
 		
